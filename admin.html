@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración - Tienda Moda</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9fafb;
+      color: #333;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .refresh-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .refresh-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+    .logout-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  float: right;
+}
+
+.logout-btn:hover {
+  background-color: #a71d2a;
+}
+.filter-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-btn:hover {
+  background-color: #117a8b;
+}
+
+.filter-btn.active {
+  background-color: #0d5c66;
+}
+
+
+  </style>
+</head>
+<body>
+  <h1>
+  📋 Panel de Administración
+  <button id="logout-btn" class="logout-btn">🚪 Cerrar sesión</button>
+</h1>
+
+<div style="margin: 15px 0; text-align:center;">
+  <input 
+    type="text" 
+    id="search-input" 
+    placeholder="🔍 Buscar por nombre, correo o mensaje..." 
+    style="padding: 10px; width: 80%; max-width: 500px; border: 1px solid #ccc; border-radius: 8px;"
+  />
+</div>
+
+<div id="filter-buttons" style="text-align:center; margin-bottom: 15px;">
+  <button class="filter-btn" data-filter="hoy">📅 Hoy</button>
+  <button class="filter-btn" data-filter="semana">🗓️ Esta semana</button>
+  <button class="filter-btn" data-filter="mes">🗂️ Este mes</button>
+  <button class="filter-btn" data-filter="todos">📋 Todos</button>
+</div>
+
+  
+
+  <button class="refresh-btn" id="refresh-btn">🔄 Actualizar Mensajes</button>
+
+  <table id="mensajes-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Mensaje</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="mensajes-body">
+      <tr><td colspan="4" class="no-data">Cargando mensajes...</td></tr>
+    </tbody>
+  </table>
+
+ 
+<script>
+  // Bloquear acceso si no hay sesión iniciada
+  if (localStorage.getItem('adminAuth') !== 'true') {
+    alert("Acceso denegado. Inicia sesión primero.");
+    window.location.href = 'login.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 🔹 Cerrar sesión
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (confirm("¿Seguro que deseas cerrar sesión?")) {
+          localStorage.removeItem('adminAuth');
+          window.location.href = 'login.html';
+        }
+      });
+    }
+
+    // 🔹 Variables
+    const cuerpoTabla = document.getElementById('mensajes-body');
+    const searchInput = document.getElementById('search-input');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    let mensajesGlobal = [];
+
+    // 🔹 Cargar mensajes
+    async function cargarMensajes() {
+      cuerpoTabla.innerHTML = '<tr><td colspan="5" class="no-data">Cargando mensajes...</td></tr>';
+      try {
+        const res = await fetch('http://localhost:3000/mensajes');
+        const mensajes = await res.json();
+        mensajesGlobal = mensajes;
+        renderMensajes(mensajes);
+      } catch (error) {
+        cuerpoTabla.innerHTML = '<tr><td colspan="5" class="no-data">❌ Error al cargar los mensajes</td></tr>';
+        console.error('Error:', error);
+      }
+    }
+
+    // 🔹 Renderizar mensajes
+    function renderMensajes(lista) {
+      if (!lista.length) {
+        cuerpoTabla.innerHTML = '<tr><td colspan="5" class="no-data">No hay mensajes que coincidan</td></tr>';
+        return;
+      }
+
+      cuerpoTabla.innerHTML = '';
+      lista.forEach(m => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${m.name}</td>
+          <td>${m.email}</td>
+          <td>${m.message}</td>
+          <td>${new Date(m.fecha).toLocaleString()}</td>
+          <td><button class="delete-btn" onclick="eliminarMensaje('${m._id}')">🗑️ Eliminar</button></td>
+        `;
+        cuerpoTabla.appendChild(fila);
+      });
+    }
+
+    // 🔹 Buscar por texto
+    searchInput.addEventListener('input', () => {
+      aplicarFiltros();
+    });
+
+    // 🔹 Filtrar por fecha
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        aplicarFiltros(btn.dataset.filter);
+      });
+    });
+
+    // 🔹 Aplicar búsqueda + filtro de fecha
+    function aplicarFiltros(filtroFecha = document.querySelector('.filter-btn.active')?.dataset.filter || 'todos') {
+      const texto = searchInput.value.toLowerCase();
+      const ahora = new Date();
+
+      const filtrados = mensajesGlobal.filter(m => {
+        const fecha = new Date(m.fecha);
+        let coincideFecha = true;
+
+        if (filtroFecha === 'hoy') {
+          coincideFecha = fecha.toDateString() === ahora.toDateString();
+        } else if (filtroFecha === 'semana') {
+          const unaSemanaAtras = new Date(ahora);
+          unaSemanaAtras.setDate(ahora.getDate() - 7);
+          coincideFecha = fecha >= unaSemanaAtras;
+        } else if (filtroFecha === 'mes') {
+          coincideFecha = fecha.getMonth() === ahora.getMonth() && fecha.getFullYear() === ahora.getFullYear();
+        }
+
+        const coincideTexto =
+          m.name.toLowerCase().includes(texto) ||
+          m.email.toLowerCase().includes(texto) ||
+          m.message.toLowerCase().includes(texto);
+
+        return coincideFecha && coincideTexto;
+      });
+
+      renderMensajes(filtrados);
+    }
+
+    // 🔹 Eliminar mensaje
+    window.eliminarMensaje = async function(id) {
+      if (!confirm("¿Seguro que deseas eliminar este mensaje?")) return;
+      try {
+        const res = await fetch(`http://localhost:3000/mensajes/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        alert(result.mensaje);
+        cargarMensajes();
+      } catch (error) {
+        alert("❌ Error al eliminar el mensaje.");
+        console.error(error);
+      }
+    };
+
+    // 🔹 Botón refrescar
+    document.getElementById('refresh-btn').addEventListener('click', cargarMensajes);
+
+    // Cargar automáticamente al abrir
+    cargarMensajes();
+  });
+</script>
+
+
+
+</body>
+</html>

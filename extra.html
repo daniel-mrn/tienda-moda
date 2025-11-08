@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda de Ropa ModaOnline</title>
+  <meta name="description" content="Tienda de ropa en línea con las mejores ofertas para hombres, mujeres y niños.">
+  <meta name="keywords" content="ropa, tienda online, moda, hombres, mujeres, niños, ofertas">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Pantalla de bienvenida -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+      <h1>Bienvenido a ModaOnline</h1>
+      <p>Explora las mejores ofertas en ropa para hombres, mujeres y niños.</p>
+      <button id="start-button" class="btn">Comenzar</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-container">
+      <img src="img/logo.png" alt="Logo de ModaOnline" class="logo">
+      <h1>ModaOnline</h1>
+      <button id="theme-toggle" class="theme-btn" title="Cambiar tema">🌙</button>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#inicio" class="nav-btn">Inicio</a></li>
+        <li><a href="#hombres" class="nav-btn">Hombres</a></li>
+        <li><a href="#mujeres" class="nav-btn">Mujeres</a></li>
+        <li><a href="#niños" class="nav-btn">Niños</a></li>
+        <li><a href="#carrito" class="nav-btn">Carrito <span id="cart-count">0</span></a></li>
+        <li><a href="#contacto" class="nav-btn">Contacto</a></li>
+        <li><a href="#acerca" class="nav-btn">Sugerencias</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="section">
+      <h2>Las Mejores Ofertas en Ropa</h2>
+      <div class="carousel">
+        <div class="carousel-images">
+          <img src="https://img.freepik.com/fotos-kostenlos/bild-einer-gluecklichen-jungen-frau-die-viele-einkaufstueten-traegt-die-dinge-auf-fruehlingsrabatten-kaufen-die-ueber-blauem-hintergrund-stehen_1258-122063.jpg" alt="Compras felices">
+          <img src="https://img.freepik.com/foto-gratis/vista-frontal-hembras-jovenes-descuento-pared-roja_140725-152216.jpg" alt="Ropa moderna">
+          <img src="https://www.japonalternativo.com/wp-content/uploads/2020/08/mejores-tiendas-de-ropa-japonesas-online.jpg" alt="Moda internacional">
+        </div>
+      </div>
+    </section>
+
+    <section id="hombres" class="section">
+      <h2>Ropa para Hombres</h2>
+      <div id="hombres-products" class="product-grid"></div>
+    </section>
+
+    <section id="mujeres" class="section">
+      <h2>Ropa para Mujeres</h2>
+      <div id="mujeres-products" class="product-grid"></div>
+    </section>
+
+    <section id="niños" class="section">
+      <h2>Ropa para Niños</h2>
+      <div id="niños-products" class="product-grid"></div>
+    </section>
+
+    <section id="carrito" class="section">
+      <h2>Tu Carrito</h2>
+      <div class="carrito-container">
+        <ul id="cart-items"></ul>
+        <p>Total: $<span id="total-price">0</span> MXN</p>
+        <button id="checkout" class="btn">Pagar</button>
+      </div>
+    </section>
+
+    <section id="contacto" class="section">
+      <h2>Contacto</h2>
+      <form id="contact-form">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" required placeholder="Escribe tu nombre">
+        <label for="email">Correo Electrónico:</label>
+        <input type="email" id="email" required placeholder="ejemplo@correo.com">
+        <label for="message">Mensaje:</label>
+        <textarea id="message" rows="4" required placeholder="Tu mensaje..."></textarea>
+        <button type="submit" class="btn">Enviar</button>
+      </form>
+    </section>
+
+    <section id="acerca" class="section">
+      <h2>Sugerencias</h2>
+      <p>Tu opinión nos ayuda a mejorar.</p>
+      <form id="feedback-form">
+        <fieldset>
+          <legend>¿Te gusta la variedad de productos?</legend>
+          <label><input type="radio" name="variedad" value="sí"> Sí</label>
+          <label><input type="radio" name="variedad" value="no"> No</label>
+        </fieldset>
+        <fieldset>
+          <legend>¿Qué podríamos mejorar?</legend>
+          <label><input type="checkbox" value="Diseño"> Diseño</label>
+          <label><input type="checkbox" value="Velocidad"> Velocidad</label>
+          <label><input type="checkbox" value="Productos"> Más productos</label>
+        </fieldset>
+        <button type="submit" class="btn">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 ModaOnline. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
