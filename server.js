@@ -11,15 +11,15 @@ app.use(express.json());
 // ----------------------------
 // 🔗 CONEXIÓN A MONGODB
 // ----------------------------
-mongoose.connect("mongodb://localhost:27017/tienda_moda", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ Conectado a MongoDB correctamente"))
-.catch(err => console.error("❌ Error al conectar con MongoDB:", err));
+// Render recomienda usar variables de entorno para tu URI de Atlas
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/tienda_moda";
+
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("✅ Conectado a MongoDB correctamente"))
+  .catch(err => console.error("❌ Error al conectar con MongoDB:", err));
 
 // ----------------------------
-// 📦 DEFINIR MODELO DE MENSAJE
+// 📦 MODELO DE MENSAJE
 // ----------------------------
 const mensajeSchema = new mongoose.Schema({
   name: String,
@@ -37,13 +37,13 @@ app.get("/", (req, res) => {
   res.send("🚀 Servidor Node.js + MongoDB funcionando correctamente");
 });
 
-// Guardar mensajes en la base de datos
+// Guardar mensaje de contacto
 app.post("/contacto", async (req, res) => {
   try {
     const nuevoMensaje = new Mensaje(req.body);
     await nuevoMensaje.save();
     console.log("📩 Mensaje guardado:", nuevoMensaje);
-    res.json({ mensaje: "Mensaje guardado correctamente en MongoDB ✅" });
+    res.json({ mensaje: "Mensaje guardado correctamente ✅" });
   } catch (error) {
     console.error("❌ Error al guardar el mensaje:", error);
     res.status(500).json({ error: "Error al guardar el mensaje" });
@@ -60,7 +60,7 @@ app.get("/mensajes", async (req, res) => {
   }
 });
 
-// 🗑️ Eliminar mensaje por ID
+// Eliminar mensaje por ID
 app.delete("/mensajes/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -73,27 +73,9 @@ app.delete("/mensajes/:id", async (req, res) => {
   }
 });
 
-
-// Obtener todos los mensajes (para prueba)
-app.get("/mensajes", async (req, res) => {
-  const mensajes = await Mensaje.find();
-  res.json(mensajes);
-});
-
-// ----------------------------
-// ⚙️ INICIAR SERVIDOR
-// ----------------------------
-const PORT = 3000;
-app.listen(PORT, () =>
-  console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`)
-);
-// ----------------------------
-// 🔐 LOGIN SIMPLE (ADMIN)
-// ----------------------------
+// Login simple (admin)
 app.post("/login", (req, res) => {
   const { usuario, clave } = req.body;
-
-  // ⚠️ Cambia esto por tus propias credenciales seguras
   const ADMIN_USER = "admin";
   const ADMIN_PASS = "1234";
 
@@ -103,5 +85,13 @@ app.post("/login", (req, res) => {
     res.status(401).json({ error: "Usuario o contraseña incorrectos ❌" });
   }
 });
+
+// ----------------------------
+// ⚙️ INICIAR SERVIDOR
+// ----------------------------
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`)
+);
 
 

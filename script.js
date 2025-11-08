@@ -1,7 +1,6 @@
+const API_URL = 'https://tienda-moda.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
-  // ----------------------------
-  // 🔹 ELEMENTOS PRINCIPALES
-  // ----------------------------
   const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
   const cartList = document.getElementById('cart-items');
   const totalPriceEl = document.getElementById('total-price');
@@ -12,19 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const welcomeScreen = document.getElementById('welcome-screen');
   const themeToggle = document.getElementById('theme-toggle');
 
-  // ----------------------------
-  // 🌙 MODO OSCURO + ANIMACIÓN
-  // ----------------------------
+  // 🌙 Modo oscuro
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
     themeToggle.textContent = '☀️';
   }
-
   function animateThemeChange() {
     document.body.classList.add('theme-transition');
     setTimeout(() => document.body.classList.remove('theme-transition'), 600);
   }
-
   themeToggle.addEventListener('click', () => {
     animateThemeChange();
     document.body.classList.toggle('dark-mode');
@@ -32,11 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   });
-  
 
-  // ----------------------------
-  // 👕 PRODUCTOS DINÁMICOS
-  // ----------------------------
+  // Productos
   const products = {
     hombres: [
       { name: "Camisa Casual", price: 50, img: "https://images-na.ssl-images-amazon.com/images/I/71KXnw6ce4L._AC_UL1500_.jpg" },
@@ -55,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   };
 
-  // Render dinámico de productos
+  // Render productos
   for (const [categoria, lista] of Object.entries(products)) {
     const contenedor = document.getElementById(`${categoria}-products`);
     lista.forEach(p => {
@@ -72,26 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ----------------------------
-  // 🛒 CARRITO DE COMPRAS
-  // ----------------------------
+  // Carrito
   function addToCart(product) {
     const existing = cartItems.find(i => i.name === product.name);
     if (existing) existing.quantity++;
     else cartItems.push({ ...product, quantity: 1 });
     saveAndRender();
   }
-
   function removeFromCart(index) {
     cartItems.splice(index, 1);
     saveAndRender();
   }
-
   function saveAndRender() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     updateCart();
   }
-
   function updateCart() {
     cartList.innerHTML = '';
     let total = 0;
@@ -117,33 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
     saveAndRender();
   });
 
-  // ----------------------------
-  // 💬 FORMULARIOS
-  // ----------------------------
+  // Feedback
   feedbackForm.addEventListener('submit', e => {
     e.preventDefault();
     alert("¡Gracias por tus sugerencias!");
     feedbackForm.reset();
   });
 
-  // 👇 ESTA ES LA VERSIÓN CORRECTA del formulario de contacto
+  // Formulario contacto
   const contactForm = document.getElementById('contact-form');
   contactForm.addEventListener('submit', async e => {
     e.preventDefault();
-
     const data = {
       name: document.getElementById('name').value,
       email: document.getElementById('email').value,
       message: document.getElementById('message').value
     };
-
     try {
-      const res = await fetch('http://localhost:3000/contacto', {
+      const res = await fetch(`${API_URL}/contacto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-
       const result = await res.json();
       alert(result.mensaje);
       contactForm.reset();
@@ -152,17 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ----------------------------
-  // 🎬 PANTALLA DE BIENVENIDA
-  // ----------------------------
+  // Pantalla bienvenida
   startButton.addEventListener('click', () => {
     welcomeScreen.style.opacity = '0';
     setTimeout(() => (welcomeScreen.style.display = 'none'), 500);
   });
 
-  // Inicializar carrito
   updateCart();
 });
+
 
 
 
